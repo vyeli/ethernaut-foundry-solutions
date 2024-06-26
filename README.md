@@ -1,66 +1,56 @@
-## Foundry
+# OpenZeppelin Ethernaut CTF Solutions using Foundry
+This repo solves all Ethernaut CTFs using Foundry framework. Solution are provided as foundry scripts.
+You can setup the environment and run the scripts to solve the challenges on Sepolia testnet.
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+## Getting Started
 
-Foundry consists of:
+- All Ethernaut CTFs smart contracts in `/src` folder.
+- Solutions are  in `/script` folder.
+- The CTF solution file has the same name as CTF contract file name adding `.s` to it.
+- If the CTF challenge is `src/Fallback.sol`, the solution will be `script/Fallback.s.sol`.
+- The solution script deploys a new instance for the CTF smart contract, then cracks it.
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+## Instalation
 
-## Documentation
+Update the `foundry` to the latest version.
 
-https://book.getfoundry.sh/
-
-## Usage
-
-### Build
-
-```shell
-$ forge build
+```bash
+foundryup
 ```
 
-### Test
+## Setup environment to run the scripts as the .env file
 
-```shell
-$ forge test
+There is a example file `.env.example` in the root folder. Copy it to `.env` and update the values.
+
 ```
+SEPOLIA_RPC_URL=
+PRIVATE_KEY=
+ETHERSCAN_API_KEY=
+MY_ADDRESS=
 
-### Format
-
-```shell
-$ forge fmt
+FALLBACK_INSTANCE=
+...
 ```
+| In case using metamask wallet, remember to add the '0x' prefix to the private key.
 
-### Gas Snapshots
 
-```shell
-$ forge snapshot
+Change the instance address for each CTF challenge the ethernaut contract generated for you.
+For example, if the CTF challenge is `Fallback`, the instance address should be put in the `FALLBACK_INSTANCE` environment variable.
+
+
+## Run the script
+
+To test the script solution without making real transactions on the blockchain use:
+
+```bash
+    forge script script/Fallback.s.sol  --rpc-url $SEPOLIA_RPC_URL -vvvv —verify
 ```
+This will run the script and show the transactions that would be made on the blockchain as a form of simulation.
 
-### Anvil
 
-```shell
-$ anvil
+To run the script solution on the blockchain use:
+
+```bash
+    forge script script/Fallback.s.sol  --rpc-url $SEPOLIA_RPC_URL -vvvv --broadcast —verify
 ```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+This will be stored in the blockchain and the transactions will be made on the blockchain.
