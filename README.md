@@ -8,7 +8,7 @@ You can setup the environment and run the scripts to solve the challenges on Sep
 - Solutions are  in `/script` folder.
 - The CTF solution file has the same name as CTF contract file name adding `.s` to it.
 - If the CTF challenge is `src/Fallback.sol`, the solution will be `script/Fallback.s.sol`.
-- The solution script deploys a new instance for the CTF smart contract, then cracks it.
+- Copy the instance address to the .env file to allow the script files to interact with the on-chain challenges.
 
 ## Instalation
 
@@ -43,7 +43,7 @@ For example, if the CTF challenge is `Fallback`, the instance address should be 
 To test the script solution without making real transactions on the blockchain use:
 
 ```bash
-    forge script script/Fallback.s.sol  --rpc-url $SEPOLIA_RPC_URL -vvvv —verify
+    forge script script/Fallback.s.sol  --rpc-url $SEPOLIA_RPC_URL -vvvv
 ```
 This will run the script and show the transactions that would be made on the blockchain as a form of simulation.
 
@@ -51,6 +51,10 @@ This will run the script and show the transactions that would be made on the blo
 To run the script solution on the blockchain use:
 
 ```bash
-    forge script script/Fallback.s.sol  --rpc-url $SEPOLIA_RPC_URL -vvvv --broadcast —verify
+    forge script script/Fallback.s.sol  --rpc-url $SEPOLIA_RPC_URL -vvvv --broadcast
 ```
 This will be stored in the blockchain and the transactions will be made on the blockchain.
+
+If there is a extra contract made to crack a challenge you can also add the --verify flag to verify your contract on-chain
+
+### Feel free to make issues!
