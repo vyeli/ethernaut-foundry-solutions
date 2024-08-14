@@ -62,7 +62,7 @@ contract CryptoVault {
     }
 }
 
-contract LegacyToken is ERC20("LegacyToken", "LGT"), Ownable(msg.sender) {
+contract LegacyToken is ERC20("LegacyToken", "LGT"), Ownable() {
     DelegateERC20 public delegate;
 
     function mint(address to, uint256 amount) public onlyOwner {
@@ -82,7 +82,7 @@ contract LegacyToken is ERC20("LegacyToken", "LGT"), Ownable(msg.sender) {
     }
 }
 
-contract DoubleEntryPoint is ERC20("DoubleEntryPointToken", "DET"), DelegateERC20, Ownable(msg.sender) {
+contract DoubleEntryPoint is ERC20("DoubleEntryPointToken", "DET"), DelegateERC20, Ownable() {
     address public cryptoVault;
     address public player;
     address public delegatedFrom;
