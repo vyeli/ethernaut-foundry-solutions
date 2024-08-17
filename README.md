@@ -1,11 +1,13 @@
-# OpenZeppelin Ethernaut CTF Solutions using Foundry
-This repo solves all Ethernaut CTFs using Foundry framework. Solution are provided as foundry scripts.
-You can setup the environment and run the scripts to solve the challenges on Sepolia testnet.
+# Openzeppelin Ethernaut CTF Solutions using Foundry
+This repo solves all Ethernaut CTFs using Foundry. Solution are provided as foundry scripts.
+You can setup the environment and run the scripts to solve the challenges.
+
+- Last Update: 2024/8
 
 ## Getting Started
 
-- All Ethernaut CTFs smart contracts in `/src` folder.
-- Solutions are  in `/script` folder.
+- All Ethernaut CTFs smart contracts are in `/src` folder.
+- Solutions are in `/script` folder.
 - The CTF solution file has the same name as CTF contract file name adding `.s` to it.
 - If the CTF challenge is `src/Fallback.sol`, the solution will be `script/Fallback.s.sol`.
 - Copy the instance address to the .env file to allow the script files to interact with the on-chain challenges.
@@ -18,9 +20,15 @@ Update the `foundry` to the latest version.
 foundryup
 ```
 
+Install OZ libraries
+
+```bash
+forge install
+```
+
 ## Setup environment to run the scripts as the .env file
 
-There is a example file `.env.example` in the root folder. Copy it to `.env` and update the values.
+There is a example file `.env.example` in the root folder. Copy it content to a `.env` and update the values to yours
 
 ```
 SEPOLIA_RPC_URL=
